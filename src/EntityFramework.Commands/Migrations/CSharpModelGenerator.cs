@@ -16,6 +16,12 @@ namespace Microsoft.Data.Entity.Commands.Migrations
     {
         private readonly CSharpHelper _code;
 
+        private readonly List<string> _coreAnnotations = new List<string>
+            {
+                "OriginalValueIndex",
+                "ShadowIndex"
+            };
+
         public CSharpModelGenerator([NotNull] CSharpHelper code)
         {
             Check.NotNull(code, nameof(code));
@@ -384,10 +390,9 @@ namespace Microsoft.Data.Entity.Commands.Migrations
             Check.NotNull(annotations, nameof(annotations));
             Check.NotNull(stringBuilder, nameof(stringBuilder));
 
-            foreach (var annotation in annotations)
+            foreach (var annotation in annotations.Where(annotation => !_coreAnnotations.Contains(annotation.Name)))
             {
                 stringBuilder.AppendLine();
-
                 GenerateAnnotation(annotation, stringBuilder);
             }
         }
